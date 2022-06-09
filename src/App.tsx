@@ -20,6 +20,7 @@ import { FirebaseProvider } from "./contexts/FirebaseContext";
 import { KrugerUser } from "./interfaces/User";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import EmployeeDashboard from "./components/employee/EmployeeDashboard";
+import { UserProvder } from "./contexts/UserContext";
 
 
 
@@ -33,8 +34,14 @@ export default function App() {
     const authState = onAuthStateChanged(auth, async (user:User | null)=> {
       if(user){
         const uid = user.uid;
-        const currentUser = await getUser(uid, app);
-        setUser(currentUser.val())
+        try{
+          const currentUseResponse = await fetch(`https://us-central1-krugre-crud.cloudfunctions.net/getUserByUid?uid=${uid}`);
+          const currentUser = await currentUseResponse.json()
+          setUser(currentUser);
+        }catch(e){
+          console.log(e);
+        }
+     
       }
     });
 
@@ -56,8 +63,10 @@ export default function App() {
   return (
   
    <FirebaseProvider value={app}>
+     <UserProvder value={user}>
       {renderOnUser()}
-   </FirebaseProvider>
+     </UserProvder>
+     </FirebaseProvider>
   );
 }
 

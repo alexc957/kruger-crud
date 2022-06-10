@@ -1,11 +1,10 @@
-import { createUserWithEmailAndPassword, getAuth, UserCredential } from 'firebase/auth'
+
 import { Button } from 'native-base'
-import React, { useContext } from 'react'
-import { escapeLeadingUnderscores } from 'typescript'
-import FirebaseContext from '../../contexts/FirebaseContext'
-import { addUser } from '../../firebase/services'
+import React from 'react'
+import axios from 'axios'
+
 import { Employee } from '../../interfaces/Employee'
-import { KrugerUser } from '../../interfaces/User'
+
 
 
 interface TableProps {
@@ -13,7 +12,7 @@ interface TableProps {
 }
 export default function EmployeTable({employees}:TableProps ) {
 
-  const app = useContext(FirebaseContext);
+
   const darAlta = async (user: Employee) => {
     
     try{
@@ -27,7 +26,13 @@ export default function EmployeTable({employees}:TableProps ) {
         name: user.nombres
       });*/
       // the following code it is insecure, change it to post in a new version lol 
-      const response  = await fetch(`https://us-central1-krugre-crud.cloudfunctions.net/createUser?email=${user.email}&password=${password}&name=${user.nombres}`);  
+      const response  = await axios.post(`https://us-central1-krugre-crud.cloudfunctions.net/api/user`,{
+        email: user.email,
+        password, // esto es inseguro lol jaja solo para no olvidarme el password de cada usuario : / 
+        name: user.nombres,
+        cedula: user.cedula,
+        
+      });  
       if(response.status===200){
         alert(`Usuario creado con mail: ${user.email} y password: ${password}`);
       }else {

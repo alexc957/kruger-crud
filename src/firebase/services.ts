@@ -1,6 +1,6 @@
 import { FirebaseApp } from "firebase/app";
 
-import { getDatabase, ref, child, get, onValue, DataSnapshot, set, Unsubscribe } from "firebase/database";
+import { getDatabase, ref, child, get, onValue, DataSnapshot, set, Unsubscribe, update } from "firebase/database";
 import { Employee } from "../interfaces/Employee";
 import { KrugerUser } from "../interfaces/User";
 const database = getDatabase();
@@ -21,6 +21,10 @@ export const addUser = (uid: string, user:KrugerUser):Promise<void> => {
 export const addEmployee =(cedula: string, employee:Employee):Promise<void> => {
 
   return  set(ref(database, "employees/"+cedula),employee);
+}
+
+export const updateEmployee = (cedula: string, employee: Employee):Promise<void> => {
+  return update(ref(database,"employees"+cedula),employee);
 }
 
 export const listenEmployees = (setData: Function):Unsubscribe  => {

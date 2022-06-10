@@ -4,13 +4,15 @@ import { FormControl, Input, VStack, Button, Select, useToast } from 'native-bas
 import { Employee } from '../../interfaces/Employee';
 import UserContext from '../../contexts/UserContext';
 import { VACCINE_TYPES } from '../../constanst/constants';
-import { addEmployee } from '../../firebase/services';
+//import { addEmployee, updateEmployee } from '../../firebase/services';
+import axios from 'axios';
 
 interface FormProps {
-    cedulas: string[];
+    cedulas?: string[];
+    currentEmployee?: Employee
 }
 
-export default function EmployeeForm({cedulas}:FormProps) {
+export default function EmployeeForm({cedulas=[],currentEmployee}:FormProps) {
     const user = useContext(UserContext);
     const toast = useToast()
 
@@ -47,16 +49,40 @@ export default function EmployeeForm({cedulas}:FormProps) {
     
     
     }
+    const addEmployee = async (data: Employee) => {
+        const response = await axios.post(`https://us-central1-krugre-crud.cloudfunctions.net/api/employee/`, data)
+        if(response.status===200){
+         alert("datos actualizados");
+        } else {
+          alert("Error al actualizar empleado");
+        }
 
+    }
+    const updateEmployee  = async (data:Employee) => {
+        console.log("data update",data);
+        const response = await axios.put(`https://us-central1-krugre-crud.cloudfunctions.net/api/employee/${data.cedula}`, data)
+        if(response.status===200){
+         alert("datos agregados");
+        } else {
+          alert("Error al actualizar empleado");
+        }
+    } 
     const onSubmit = async (data: Employee) => {
         try {
+          //  console.log("data?",data);
             if(cedulas.includes(data.cedula)){
                 alert("El usuario ya ha sido registrado anteriormente ")
                 return; 
             }
-            console.log("entre aqui ?")
-            await addEmployee(data.cedula, data);
-             alert("Empleado agregado");
+            //console.log("entre aqui ?")
+            if(currentEmployee){
+               //await updateEmployee(currentEmployee.cedula, data);
+                await updateEmployee(data);
+            }else {
+             await addEmployee(data);
+            
+            }
+            
         }catch(e){
             console.log("e ",e);
             alert("Error al agregar empleado");
@@ -64,17 +90,17 @@ export default function EmployeeForm({cedulas}:FormProps) {
     }
   return (
     <Formik  onSubmit={onSubmit}  validate={onValidate} initialValues={{
-        cedula: "",
-        nombres: "",
-        apellidos: "",
-        email: "",
-        fechaNacimiento: "",
-        dirDomicilio: "",
-        telMovil: "",
-        vacStatus: "",
-        vaccineType: "",
-        vaccinationDate: "",
-        numDosis: 0,
+        cedula: currentEmployee?.cedula ||  "",
+        nombres: currentEmployee?.nombres ||  "",
+        apellidos: currentEmployee?.apellidos ||  "",
+        email: currentEmployee?.email ||  "",
+        fechaNacimiento: currentEmployee?.fechaNacimiento ||  "",
+        dirDomicilio: currentEmployee?.dirDomicilio  ||  "",
+        telMovil: currentEmployee?.telMovil ||   "",
+        vacStatus: currentEmployee?.vacStatus ||   "",
+        vaccineType:  currentEmployee?.vaccineType ||  "",
+        vaccinationDate: currentEmployee?.vaccinationDate ||  "",
+        numDosis: currentEmployee?.numDosis ||  0,
 
       }} >
           {({
@@ -124,12 +150,12 @@ export default function EmployeeForm({cedulas}:FormProps) {
                 <FormControl isDisabled={user?.role==="admin"} >
                     <FormControl.Label>Fecha de Nacimiento</FormControl.Label>
                     
-                    <Input 
+                    <input 
                         type='date'
-                        
-                        onBlur={handleBlur('fechaNacimiento')} 
+                        name='fechaNacimiento'
+                        onBlur={handleBlur} 
                         placeholder="Fecha de nacimiento" 
-                        onChangeText={handleChange('fechaNacimiento')} 
+                        onChange={handleChange} 
                         value={values.fechaNacimiento} />
                 
                 </FormControl>
@@ -162,25 +188,30 @@ export default function EmployeeForm({cedulas}:FormProps) {
                 <FormControl isDisabled={!isVaccinated}>
                     <FormControl.Label>Estado de Vacunacion</FormControl.Label>
                     
-                        <Select 
-                            selectedValue={values.vacStatus}
-                            onValueChange={handleChange('vacStatus')}>
-                                <Select.Item  label='No Vacunado' value='No Vacunado'/>
-                                <Select.Item  label='Vacunado' value='Vacunado'/>
+                        <select 
+                            value={values.vacStatus}
+                            name="vacStatus"
+                            onBlur={handleBlur}
+                            onChange={handleChange}>
+                                <option  value='No Vacunado'>No Vacunado</option>
+                                <option  value='Vacunado'>Vacunado</option>
                             
-                        </Select>
+                        </select>
                 
                 </FormControl>
                 <FormControl isDisabled={!isVaccinated}>
                     <FormControl.Label>Tipo de Vacuna</FormControl.Label>
                     
-                        <Select 
-                            selectedValue={values.vaccineType}
-                            onValueChange={handleChange('vaccineType')}>
-                                {VACCINE_TYPES.map((vacc: string, index: number)=><Select.Item key={index} label={vacc} value={vacc}/>)}
+                        <select 
+                            disabled={!isVaccinated}
+                            value={values.vaccineType}
+                            name="vaccineType"
+                            onBlur={handleBlur}
+                            onChange={handleChange}>
+                                {VACCINE_TYPES.map((vacc: string, index: number)=><option key={index}  value={vacc}>{vacc}</option>)}
                                 
                             
-                        </Select>
+                        </select>
                 
                 </FormControl>
 
@@ -188,12 +219,13 @@ export default function EmployeeForm({cedulas}:FormProps) {
                 <FormControl isDisabled={!isVaccinated} >
                     <FormControl.Label>Fecha de Vacunacion</FormControl.Label>
                     
-                    <Input 
+                    <input 
                         type='date'
-                        
-                        onBlur={handleBlur('vaccinationDate')} 
+                        disabled={!isVaccinated}
+                        onBlur={handleBlur} 
                         placeholder="Fecha de Vacunacion" 
-                        onChangeText={handleChange('vaccinationDate')} 
+                        name="vaccinationDate"
+                        onChange={handleChange} 
                         value={values.vaccinationDate} />
                 
                 </FormControl>

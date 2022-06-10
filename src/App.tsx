@@ -21,6 +21,7 @@ import { KrugerUser } from "./interfaces/User";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import EmployeeDashboard from "./components/employee/EmployeeDashboard";
 import { UserProvder } from "./contexts/UserContext";
+import axios from "axios";
 
 
 
@@ -35,9 +36,11 @@ export default function App() {
       if(user){
         const uid = user.uid;
         try{
-          const currentUseResponse = await fetch(`https://us-central1-krugre-crud.cloudfunctions.net/getUserByUid?uid=${uid}`);
-          const currentUser = await currentUseResponse.json()
-          setUser(currentUser);
+          const currentUseResponse = await axios.get(`https://us-central1-krugre-crud.cloudfunctions.net/api/user/${uid}`);
+          if(currentUseResponse.status===200){
+            const currentUser =  currentUseResponse.data
+            setUser(currentUser);
+          }
         }catch(e){
           console.log(e);
         }

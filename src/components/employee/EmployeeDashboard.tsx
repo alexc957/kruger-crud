@@ -24,7 +24,7 @@ export default function EmployeeDashboard() {
     getEmployee() 
   }, [])
   return (
-    <Center>
+    <Center bg="lightBlue.100">
       {!currentEmployee? <Spinner /> : <EmployeeForm  currentEmployee={currentEmployee}/>}
     </Center>
   )

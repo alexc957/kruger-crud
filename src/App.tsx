@@ -9,11 +9,13 @@ import {
   Switch,
   useColorMode,
   VStack,
+  Container,
+  Button,
   
 } from "native-base";
 import app from './firebase/firebase';
 import { createContext, useEffect, useState } from "react";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, User } from "firebase/auth";
 import { getUser } from "./firebase/services";
 import Login from "./components/Login";
 import { FirebaseProvider } from "./contexts/FirebaseContext";
@@ -30,6 +32,13 @@ const auth = getAuth(app)
 export default function App() {
 
   const [user, setUser] = useState<KrugerUser | null>(null);
+
+  const handleLogout = async () => {
+    try{
+      await signOut(auth);
+      setUser(null)
+    }catch(e){}
+  }
 
   useEffect(()=> {
     const authState = onAuthStateChanged(auth, async (user:User | null)=> {
@@ -67,7 +76,14 @@ export default function App() {
   
    <FirebaseProvider value={app}>
      <UserProvder value={user}>
-      {renderOnUser()}
+      {user &&   <Container bg="lightBlue.100" flexDirection={"row-reverse"}>
+           
+           <Button onPress={handleLogout}>Salir</Button>
+        
+
+       
+     </Container>}
+       {renderOnUser()}
      </UserProvder>
      </FirebaseProvider>
   );

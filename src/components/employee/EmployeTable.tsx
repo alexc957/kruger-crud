@@ -1,6 +1,6 @@
 
 import { Button, Heading , Center, Select} from 'native-base'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 
 import { Employee } from '../../interfaces/Employee'
@@ -13,14 +13,18 @@ interface TableProps {
 }
 export default function EmployeTable({employees}:TableProps ) {
 
-  const [filterType, setFilterType] = useState<string>("Estado de vacunacion"); // estado de vacunacion, tipo de vacuna, o rango de fecha de vacunacion
+  const [filterType, setFilterType] = useState<string>(""); // estado de vacunacion, tipo de vacuna, o rango de fecha de vacunacion
 
-  const [filterValue, setFilterValue] = useState<string>("No Vacunado");
+  const [filterValue, setFilterValue] = useState<string>("");
 
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
   const [filteredEmployees, setFIlteredEmployees ] = useState<Employee[]>(employees);
+
+  useEffect(()=> {
+    setFIlteredEmployees(employees)
+  },[employees])
 
   
 
@@ -75,7 +79,8 @@ export default function EmployeTable({employees}:TableProps ) {
     </Select>
     }
 
-    return <Center>
+    if(filterType==="Rango de fechas de vacunacion"){
+      return <Center>
       <div>
         <label htmlFor='start' >Fecha Inicio</label>
         <input value={startDate} id="start" onChange={e=> setStartDate(e.target.value)} type="date" />
@@ -86,6 +91,9 @@ export default function EmployeTable({employees}:TableProps ) {
       </div>
     </Center>
 
+    }
+
+    return null
 
   }
 

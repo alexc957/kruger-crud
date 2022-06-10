@@ -97,7 +97,7 @@ export default function EmployeeForm({cedulas=[],currentEmployee}:FormProps) {
         fechaNacimiento: currentEmployee?.fechaNacimiento ||  "",
         dirDomicilio: currentEmployee?.dirDomicilio  ||  "",
         telMovil: currentEmployee?.telMovil ||   "",
-        vacStatus: currentEmployee?.vacStatus ||   "",
+        vacStatus: currentEmployee?.vacStatus ||   "No Vacunado",
         vaccineType:  currentEmployee?.vaccineType ||  "",
         vaccinationDate: currentEmployee?.vaccinationDate ||  "",
         numDosis: currentEmployee?.numDosis ||  0,

@@ -14,7 +14,7 @@ interface FormProps {
 
 export default function EmployeeForm({cedulas=[],currentEmployee}:FormProps) {
     const user = useContext(UserContext);
-    const toast = useToast()
+ 
 
     const [isVaccinated, setIsVaccinated] = useState<boolean>(false);
     const onValidate = (values: Employee) => {

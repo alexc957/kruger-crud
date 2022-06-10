@@ -30,16 +30,21 @@ La estructura de la base es la siguiente:
 * users: contiene todos los usuarios que pueden ingresar al sistema.
 * employeees: contiene todos los empleados con los campos descritos en la formulacion del problema. 
 
+## Pasos para ejecutar el proyectoL
+1. Clonar el proyecto con git.
+2. instalar depedencias: npm i.
+3. enjoy. 
+
 ## TODO: Trabajo por mejorar
 * integrar React Router.
 * reestructurar el backend.
 * mejorar los filtros de la tabla.
 * estilos.
-
+nota: se puede visitar la app en el siguiente [enlace](https://krugre-crud.web.app)
 ## Capturas de pantalla 
 
 ![login](./capturas/login.png "Pantalla de LOGIN")
 
 ![Admin](./capturas/admin.png "Pantalla admin dashboard")
 
-![Employee](./capturas/admin.png "Pantalla de form de employee")
+![Employee](./capturas/employeeForm.png "Pantalla de form de employee")
